@@ -1,0 +1,308 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Web Prodavnica</title>
+    <script src="Scripts/jquery-3.4.1.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            LoadP();
+            $(".collapsible").click(function () {
+                $(this).toggleClass("active");
+                var content = $(this).next();
+                if (content.is(":visible")) {
+                    content.slideUp();
+                } else {
+                    content.slideDown();
+                }
+            });
+            $('#Pretrazi1').click(function () {
+
+                let productName = $('#Pretraga1Naziv').val();
+                let minPrice = $('#Pretraga1MinCena').val();
+                let maxPrice = $('#Pretraga1MaxCena').val();
+                let city = $('#Pretraga1Grad').val();
+                if (productName === "" && minPrice === "" && maxPrice === "" && city === "") {
+                    $.get("/api/products", function (data, status) {
+                        let tableOfProducts = "<table border='1'>";
+                        for (product in data) {
+                            tableOfProducts += `<tr><td>${data[product].Id}</td><td>${data[product].Naziv}</td><td>${data[product].Cena}</td><td>${data[product].Kolicina}</td><td>${data[product].Grad}</td><td>${data[product].Opis}</td><td>${data[product].DatumPostavljanja}</td><td><img src="${data[product].Slika}" alt="Nema slike" style="max-width: 80px; max-height: 80px;"></td></tr>`;
+                        }
+                        tableOfProducts += "</table>";
+                        if (tableOfProducts === "<table border='1'></table>") {
+                            $("#TabelaProizvoda").html("<p style=\"color: #FF0000;font-size: 24px;\">Nema nijednog trazenog proizvoda</p>");
+                        }
+                        else
+                            $("#TabelaProizvoda").html(tableOfProducts);
+                    });
+                    return;
+                }
+                if (minPrice === "") minPrice = -1;
+                if (maxPrice === "") maxPrice = -1;
+                $.get("/api/products", function (data, status) {
+                    let tableOfProducts = "<table border='1'>";
+                    for (p in data) {
+                        if ((productName !== "" && data[p].Naziv === productName) || (minPrice !== -1 && data[p].Cena >= minPrice) || (maxPrice !== -1 && data[p].Cena <= maxPrice) || (city !== "" && data[p].Grad === city))
+                            tableOfProducts += `<tr><td>${data[p].Id}</td><td>${data[p].Naziv}</td><td>${data[p].Cena}</td><td>${data[p].Kolicina}</td><td>${data[p].Grad}</td><td>${data[p].Opis}</td><td>${data[product].DatumPostavljanja}</td><td><img src="${data[p].Slika}" alt="Nema slike" style="max-width: 80px; max-height: 80px;"></td></tr>`;
+                    }
+                    tableOfProducts += "</table>";
+                    if (tableOfProducts === "<table border='1'></table>") {
+                        $("#TabelaProizvoda").html("<p style=\"color: #FF0000;font-size: 24px;\">Nema nijednog trazenog proizvoda</p>");
+                    }
+                    else
+                    $("#TabelaProizvoda").html(tableOfProducts);
+                });
+
+               // $(this).trigger("reset");
+            });
+            $(".search-form2").submit(function (event) {
+                event.preventDefault(); 
+
+ 
+                let productName = $('#Pretraga2Naziv').val();
+                let minPrice = $('#Pretraga2MinCena').val();
+                let maxPrice = $('#Pretraga2MaxCena').val();
+                let city = $('#Pretraga2Grad').val();
+                if (productName === "" && minPrice === "" && maxPrice === "" && city === "") {
+                    $.get("/api/products", function (data, status) {
+                        let tableOfProducts = "<table border='1'>";
+                        for (p in data) {
+                            if ((productName !== "" && data[p].Naziv === productName) || (minPrice !== -1 && data[p].Cena >= minPrice) || (maxPrice !== -1 && data[p].Cena <= maxPrice) || (city !== "" && data[p].Grad === city))
+                                tableOfProducts += `<tr><td>${data[p].Id}</td><td>${data[p].Naziv}</td><td>${data[p].Cena}</td><td>${data[p].Kolicina}</td><td>${data[p].Grad}</td><td>${data[p].Opis}</td><td>${data[product].DatumPostavljanja}</td><td><img src="${data[p].Slika}" alt="Nema slike" style="max-width: 80px; max-height: 80px;"></td></tr>`;
+                        }
+                        tableOfProducts += "</table>";
+                        if (tableOfProducts === "<table border='1'></table>") {
+                            $("#TabelaProizvoda").html("<p style=\"color: #FF0000;font-size: 24px;\">Nema nijednog trazenog proizvoda</p>");
+                        }
+                        else
+                            $("#TabelaProizvoda").html(tableOfProducts);
+                    });
+                    return;
+                }
+                if (minPrice === "") minPrice = -1;
+                if (maxPrice === "") maxPrice = -1;
+                $.get("/api/products", function (data, status) {
+                    let tableOfProducts = "<table border='1'>";
+                    for (p in data) {
+                        if ((productName !== "" && data[p].Naziv === productName) || (minPrice !== -1 && data[p].Cena >= minPrice) || (maxPrice !== -1 && data[p].Cena <= maxPrice) || (city !== "" && data[p].Grad === city))
+                            tableOfProducts += `<tr><td>${data[p].Id}</td><td>${data[p].Naziv}</td><td>${data[p].Cena}</td><td>${data[p].Kolicina}</td><td>${data[p].Grad}</td><td>${data[p].Opis}</td><td>${data[product].DatumPostavljanja}</td><td><img src="${data[p].Slika}" alt="Nema slike" style="max-width: 80px; max-height: 80px;"></td></tr>`;
+                    }
+                    tableOfProducts += "</table>";
+                    if (tableOfProducts === "<table border='1'></table>") {
+                        $("#TabelaProizvoda").html("<p style=\"color: #FF0000;font-size: 24px;\">Nema nijednog trazenog proizvoda</p>");
+                    }
+                    else
+                        $("#TabelaProizvoda").html(tableOfProducts);
+                });
+
+            });
+            $(".sort-form").change(function (event) {
+                event.preventDefault();
+
+
+                var vrsta = $('.sort-form select').val();
+
+
+                $.get("/api/products", function (data, status) {
+                    let tableOfProducts = "<table border='1'>";
+                    if (vrsta === "cena_rast") data.sort(function (a, b) { return a.Cena - b.Cena });
+                    else if (vrsta === "cena_opad") data.sort(function (a, b) { return b.Cena - a.Cena });
+                    else if (vrsta === "naziv_rast") data.sort(function (a, b) { return a.Naziv.localeCompare(b.Naziv) });
+                    else if (vrsta === "naziv_opad") { data.sort(function (a, b) { return a.Naziv.localeCompare(b.Naziv) }); data.reverse(); }
+                    else if (vrsta === "datum_rast") data.sort(function (a, b) { return a.DatumPostavljanja - b.DatumPostavljanja });
+                    else if (vrsta === "datum_opad") data.sort(function (a, b) { return b.DatumPostavljanja - a.DatumPostavljanja });
+
+                    for (product in data) {
+                        tableOfProducts += `<tr><td>${data[product].Id}</td><td>${data[product].Naziv}</td><td>${data[product].Cena}</td><td>${data[product].Kolicina}</td><td>${data[product].Grad}</td><td>${data[product].Opis}</td><td>${data[product].DatumPostavljanja}</td><td><img src="${data[product].Slika}" alt="Nema slike" style="max-width: 80px; max-height: 80px;"></td></tr>`;
+                    }
+                    tableOfProducts += "</table>";
+                    if (tableOfProducts === "<table border='1'></table>") {
+                        $("#TabelaProizvoda").html("<p style=\"color: #FF0000;font-size: 24px;\">Nema nijednog trazenog proizvoda</p>");
+                    }
+                    else
+                        $("#TabelaProizvoda").html(tableOfProducts);
+                });
+
+            });
+            //$('#registracija').click(function () {
+
+            //    let ime = $('#Ime').val();
+            //    let prezime = $('#Prezime').val();
+            //    let lozinka = $('#Lozinka').val();
+            //    let email = $('#Email').val();
+            //    if (ime === "" && prezime === "" && lozinka === "" && email === "") {
+            //        alert("Niste uneli sva polja za registraciju");
+            //        event.preventDefault();
+            //        return;
+            //    }
+            //    $.post('/api/users', {},
+            //        function (result) {
+
+            //        }
+            //    );
+
+            //});
+            $(".Register").submit(function () {
+
+                let ime = $('#Ime').val();
+                let prezime = $('#Prezime').val();
+                let lozinka = $('#Lozinka').val();
+                let email = $('#Email').val();
+                if (ime === "" && prezime === "" && lozinka === "" && email === "")
+                {
+                    alert("Niste uneli sva polja za registraciju");
+                    event.preventDefault();
+                    return;
+                }
+
+            });
+            function LoadP() {
+                $.get("/api/products", function (data, status) {
+                    let tableOfProducts = "<table border='1'>";
+                    for (product in data) {
+                        tableOfProducts += `<tr><td>${data[product].Id}</td><td>${data[product].Naziv}</td><td>${data[product].Cena}</td><td>${data[product].Kolicina}</td><td>${data[product].Grad}</td><td>${data[product].Opis}</td><td>${data[product].DatumPostavljanja}</td><td><img src="${data[product].Slika}" alt="Nema slike" style="max-width: 80px; max-height: 80px;"></td></tr>`;
+                    }
+                    tableOfProducts += "</table>";
+                    if (tableOfProducts === "<table border='1'></table>") {
+                        $("#TabelaProizvoda").html("<p style=\"color: #FF0000;font-size: 24px;\">Nema nijednog proizvoda</p>");
+                    }
+                    else
+                        $("#TabelaProizvoda").html(tableOfProducts);
+                });
+            }
+          
+        });
+    </script>
+    <style>
+        body {
+            text-align: center;
+            background-image: url('Slike/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        h1 {
+            margin-top: 30px;
+            color: #fff;
+        }
+
+        h2 {
+            color: #fff;
+            margin-right: 10px;
+        }
+
+        table {
+            margin: 0 auto;
+            width: 100%;
+            background-color: #fff;
+            border-collapse: collapse;
+        }
+
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .collapsible.active {
+            font-weight: bold;
+        }
+
+        .search-form,
+        .sort-form,
+        .form-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+            .search-form input[type="text"],
+            .search-form input[type="number"],
+            .sort-form select,
+            .form-container input[type="text"],
+            .form-container input[type="email"],
+            .form-container input[type="password"] {
+                margin-right: 10px;
+            }
+
+            .form-container input[type="submit"] {
+                margin-top: 10px;
+            }
+
+        #credentials {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            text-align: left;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Početna stranica</h1>
+    <form class="sort-form">
+        <h2>Sortiranje proizvoda:</h2>
+        <select>
+            <option value="naziv_rast">Naziv rastuće</option>
+            <option value="naziv_opad">Naziv opadajuće</option>
+            <option value="cena_rast">Cena rastuće</option>
+            <option value="cena_opad">Cena opadajuće</option>
+            <option value="datum_rast">Datum oglašavanja rastuće</option>
+            <option value="datum_opad">Datum oglašavanja opadajuć</option>
+        </select>
+    </form>
+    <div style="overflow-y: auto; max-height: 400px; width: 80%; margin:20px auto" id="TabelaProizvoda">
+
+    </div>
+
+
+    <h2>Pretraga</h2>
+    <div class="search-form">
+        <input type="text" placeholder="Naziv proizvoda" id="Pretraga1Naziv">
+        <input type="number" placeholder="Minimalna cena" id="Pretraga1MinCena">
+        <input type="number" placeholder="Maksimalna cena" id="Pretraga1MaxCena">
+        <input type="text" placeholder="Grad dostupnosti" id="Pretraga1Grad">
+        <input type="submit" value="Pretraži" id="Pretrazi1">
+    </div>
+
+
+    <h2 class="collapsible">Kombinovana pretraga</h2>
+    <form class="search-form2">
+        <input type="text" placeholder="Naziv proizvoda" id="Pretraga2Naziv">
+        <input type="number" placeholder="Minimalna cena" id=" Pretraga2MinCena">
+        <input type="number" placeholder="Maksimalna cena" id="Pretraga2MaxCena">
+        <input type="text" placeholder="Grad dostupnosti" id="Pretraga2Grad">
+        <input type="submit" value="Pretraži">
+    </form>
+
+    <h2>Registracija</h2>
+    <div class="Register">
+        <form action="/Users/Post" method="post">
+            <input type="text" placeholder="Ime" id="Ime">
+            <input type="text" placeholder="Prezime" id="Prezime">
+            <input type="email" placeholder="Email" id="Email">
+            <input type="password" placeholder="Lozinka" id="Lozinka">
+            <input type="submit" value="Registruj se" id="registracija">
+        </form>
+    </div>
+
+
+    <h2>Prijavljivanje na sistem</h2>
+    <div class="form-container">
+        <form>
+            <input type="text" placeholder="Korisničko ime">
+            <input type="password" placeholder="Lozinka">
+            <input type="submit" value="Prijavi se">
+        </form>
+    </div>
+
+
+    <div id="credentials">
+        <p>Korisničko ime: example_user</p>
+        <p>Lozinka: ********</p>
+    </div>
+</body>
+</html>
